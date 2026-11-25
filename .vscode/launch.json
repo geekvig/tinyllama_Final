@@ -1,0 +1,74 @@
+{
+    // F5 starts the configuration selected in the Run and Debug panel (Ctrl+Shift+D).
+    // Requires the "C/C++" extension (ms-vscode.cpptools).
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug tinyllama (tiny test model)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tinyllama_dbg.exe",
+            "args": ["-m", "tests/data/tiny_q.gguf", "-p", "once upon a time", "-n", "20", "--temp", "0"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "windows": { "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe" },
+            "linux": { "miDebuggerPath": "/usr/bin/gdb" },
+            "environment": [{ "name": "PATH", "value": "C:\\msys64\\ucrt64\\bin;${env:PATH}" }],
+            "setupCommands": [
+                { "description": "Pretty-print std::vector, std::string ...", "text": "-enable-pretty-printing", "ignoreFailures": true },
+                { "description": "Show at most 64 array elements", "text": "set print elements 64", "ignoreFailures": true }
+            ],
+            "preLaunchTask": "build debug"
+        },
+        {
+            "name": "Debug tinyllama (your GGUF model)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tinyllama_dbg.exe",
+            "args": ["-m", "${input:modelPath}", "-p", "${input:prompt}", "-n", "16", "--temp", "0"],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "windows": { "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe" },
+            "linux": { "miDebuggerPath": "/usr/bin/gdb" },
+            "environment": [{ "name": "PATH", "value": "C:\\msys64\\ucrt64\\bin;${env:PATH}" }],
+            "setupCommands": [{ "text": "-enable-pretty-printing", "ignoreFailures": true }],
+            "preLaunchTask": "build debug"
+        },
+        {
+            "name": "Debug run_tests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/run_tests_dbg.exe",
+            "args": ["${input:testFilter}"],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "windows": { "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe" },
+            "linux": { "miDebuggerPath": "/usr/bin/gdb" },
+            "environment": [{ "name": "PATH", "value": "C:\\msys64\\ucrt64\\bin;${env:PATH}" }],
+            "setupCommands": [
+                { "text": "-enable-pretty-printing", "ignoreFailures": true },
+                { "text": "set print elements 64", "ignoreFailures": true }
+            ],
+            "preLaunchTask": "build tests debug"
+        },
+        {
+            "name": "Attach to a running (hung) process",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build/run_tests_dbg.exe",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "windows": { "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe" },
+            "linux": { "miDebuggerPath": "/usr/bin/gdb" },
+            "setupCommands": [{ "text": "-enable-pretty-printing", "ignoreFailures": true }]
+        }
+    ],
+    "inputs": [
+        { "id": "modelPath", "type": "promptString", "description": "Path to a .gguf file",
+          "default": "C:/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf" },
+        { "id": "prompt", "type": "promptString", "description": "Prompt", "default": "Once upon a time" },
+        { "id": "testFilter", "type": "promptString", "description": "Test name filter (empty = all)", "default": "" }
+    ]
+}

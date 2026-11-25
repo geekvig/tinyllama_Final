@@ -1,0 +1,6 @@
+{
+    // Make the integrated terminal find g++, gdb and the MinGW runtime DLLs.
+    "terminal.integrated.env.windows": { "PATH": "C:\\msys64\\ucrt64\\bin;${env:PATH}" },
+    "files.associations": { "*.hpp": "cpp" },
+    "C_Cpp.default.cppStandard": "c++17"
+}

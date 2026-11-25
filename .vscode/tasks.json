@@ -1,0 +1,187 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+            "PATH": "C:\\msys64\\ucrt64\\bin;${env:PATH}"
+        }
+    },
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "cmd.exe",
+                "args": [
+                    "/d",
+                    "/c"
+                ]
+            }
+        }
+    },
+    "tasks": [
+        {
+            "label": "build debug",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O0",
+                "-g3",
+                "-D_GLIBCXX_ASSERTIONS",
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "-pthread",
+                "src/main.cpp",
+                "-o",
+                "build/tinyllama_dbg.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "dependsOn": "make build dir"
+        },
+        {
+            "label": "build tests debug",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O0",
+                "-g3",
+                "-D_GLIBCXX_ASSERTIONS",
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "-pthread",
+                "tests/run_tests.cpp",
+                "-o",
+                "build/run_tests_dbg.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "dependsOn": "make build dir"
+        },
+        {
+            "label": "build release",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O2",
+                "-march=native",
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "-pthread",
+                "src/main.cpp",
+                "-o",
+                "build/tinyllama.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "dependsOn": "make build dir"
+        },
+        {
+            "label": "build tests release",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O2",
+                "-march=native",
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "-pthread",
+                "tests/run_tests.cpp",
+                "-o",
+                "build/run_tests.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "dependsOn": "make build dir"
+        },
+        {
+            "label": "build all",
+            "dependsOn": [
+                "build release",
+                "build debug",
+                "build tests release",
+                "build tests debug"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "run tests",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/run_tests.exe",
+            "dependsOn": "build tests release",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "run tiny model",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/tinyllama.exe",
+            "args": [
+                "-m",
+                "tests/data/tiny_q.gguf",
+                "-p",
+                "once upon a time",
+                "-n",
+                "30"
+            ],
+            "dependsOn": "build release",
+            "problemMatcher": []
+        },
+        {
+            "label": "make build dir",
+            "type": "shell",
+            "windows": {
+                "command": "if not exist build mkdir build"
+            },
+            "linux": {
+                "command": "mkdir -p build"
+            },
+            "osx": {
+                "command": "mkdir -p build"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build active file",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-march=native"
+            ],
+            "options": {
+                "cwd": "C:/msys64/ucrt64/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Task generated by Debugger."
+        }
+    ]
+}
